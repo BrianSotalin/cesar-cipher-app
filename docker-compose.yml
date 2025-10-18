@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # 1. SERVICIO BACKEND (PYTHON/FLASK)
+  backend:
+    container_name: code_cesar_api
+    build:
+      # El contexto es la carpeta 'code-cesar'
+      context: ./code-cesar 
+    ports:
+      - "5001:5000"       # Mapeo: 5001 local -> 5000 interno
+    expose:
+      - "5000"            # Puerto interno para la red Docker
+    restart: always
+
+  # 2. SERVICIO FRONTEND (REACT/NGINX)
+  frontend:
+    container_name: frontend_cipher_app
+    build:
+      # El contexto es la carpeta 'frontend-cipher'
+      context: ./frontend-cipher 
+    ports:
+      - "80:80"             # Mapeo: 80 local -> 80 interno
+    depends_on:
+      - backend             # Asegura que el backend inicie primero
+    volumes:
+    - ./frontend-cipher/nginx/default.conf:/etc/nginx/conf.d/default.conf  
+    restart: always
